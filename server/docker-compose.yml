@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  database:
+    image: postgres
+    ports:
+      - '5432:5432'
+    container_name: back-ecomm
+    restart: always
+    volumes:
+      - back-ecomm-disk:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: qwer1234
+      POSTGRES_DB: back-ecomm
+
+volumes:
+  back-ecomm-disk:
