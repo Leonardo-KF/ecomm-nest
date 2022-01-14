@@ -7,7 +7,7 @@ import { ApiOperation, ApiTags, ApiBearerAuth} from "@nestjs/swagger"
 import {AuthGuard} from "@nestjs/passport";
 import { AuthUser } from "../auth/auth-user.decorator"
 
-ApiTags("user")
+ApiTags("users")
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
