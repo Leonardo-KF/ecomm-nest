@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from '@prisma/client';
-import { ApiOperation, ApiTags} from "@nestjs/swagger"
-
+import { User, Product } from '@prisma/client';
+import { ApiOperation, ApiTags, ApiBearerAuth} from "@nestjs/swagger"
+import {AuthGuard} from "@nestjs/passport";
+import { AuthUser } from "../auth/auth-user.decorator"
 
 ApiTags("user")
 @Controller('user')
@@ -17,6 +18,16 @@ export class UserController {
   })
   create(@Body() createUserDto: CreateUserDto): Promise<User> {
     return this.userService.create(createUserDto);
+  }
+
+  @UseGuards(AuthGuard())
+  @Patch("addcart/:id")
+  @ApiOperation({
+    summary: "add/remove to cart"
+  })
+  @ApiBearerAuth()
+  addCart(@AuthUser() user: User, @Param("id") productId: string ) {
+    return this.userService.addCart(user, productId);
   }
 
   @Get()

@@ -28,13 +28,14 @@ export class ProductController {
     return this.productService.findOne(id);
   }
 
-  @Patch('find/:id')
+ @Patch('find/:id')
   update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-    return this.productService.update(+id, updateProductDto);
+    return this.productService.update(id, updateProductDto);
   }
 
   @Delete('delete/:id')
   remove(@Param('id') id: string) {
-    return this.productService.remove(+id);
+    return this.productService.remove(id);
   }
+  
 }

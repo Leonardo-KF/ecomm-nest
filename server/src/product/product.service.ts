@@ -30,7 +30,8 @@ export class ProductService {
     return product;
   }
 
-  async update(id: number, updateProductDto: UpdateProductDto) {
+  
+  async update(id: string, updateProductDto: UpdateProductDto) {
     return `This action updates a #${id} product`;
   }
 
@@ -38,5 +39,5 @@ export class ProductService {
     const product = await this.prismaService.product.findFirst({where: {id}});
     
     return `This action removes a #${id} product`;
-  }
+  } 
 }

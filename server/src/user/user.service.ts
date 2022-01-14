@@ -1,9 +1,10 @@
-import { ConflictException, Injectable } from '@nestjs/common';
-import { User } from '@prisma/client'
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { User, Product } from '@prisma/client'
 import { PrismaService } from 'src/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
+
 
 @Injectable()
 export class UserService {
@@ -38,6 +39,51 @@ export class UserService {
     return user;
   }
 
+  async addCart(user: User, productId: string){
+    const product = await this.database.product.findUnique({
+      where: {id: productId}
+    })
+
+    if (!product) {
+      throw new NotFoundException("Produto não encontrado");
+    }
+
+    const inCart = await this.database.user.findUnique({
+      where: {id: user.id},
+      include: { products: true }
+    })
+
+    inCart.products.map(async (product) => {
+      if (product.id === productId) {
+        await this.database.user.update({
+          where: { id: user.id},
+          data: { 
+            products: {
+              disconnect: {
+                id: productId
+              }
+            }
+          }
+        })
+        return {message: "Produto adcionado ao carrinho"}
+      } else {
+        await this.database.user.update({
+          where: { id: user.id },
+          data: {
+            products: { 
+              connect: { 
+                id: productId
+              }
+            }
+          }
+        })
+      }
+      return { message: "Produto removido do carrinho"}
+    })
+
+    
+  }
+
   async findAll() {
     return `This action returns all user`;
   }
@@ -50,7 +96,7 @@ export class UserService {
     return `This action updates a #${id} user`;
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     return `This action removes a #${id} user`;
   }
 }
