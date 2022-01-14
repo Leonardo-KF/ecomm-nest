@@ -84,19 +84,35 @@ export class UserService {
     
   }
 
-  async findAll() {
-    return `This action returns all user`;
+  async cart(user: User) {
+    return await this.database.user.findUnique({
+      where: {id: user.id},
+      include: { products: true}
+    })
   }
 
-  async findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async update(user: User, updateUserDto: UpdateUserDto): Promise<User> {
+    const updateU = await this.database.user.update({
+      data: updateUserDto,
+      where: {id: user.id},
+    })
+
+    delete updateU.password
+
+    return updateU;
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
+  async remove(user: User): Promise<{message: string}> {
+    const conta = await this.database.user.findUnique({where: {id: user.id}})
 
-  async remove(id: string) {
-    return `This action removes a #${id} user`;
+    if (!conta) {
+      throw new NotFoundException("Usuario não encontrado")
+    } else {
+      await this.database.user.delete({
+        where: { id: user.id }
+      })
+    }
+
+    return { message: "Usuario deletado"};
   }
 }

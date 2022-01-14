@@ -19,21 +19,33 @@ export class ProductController {
   }
 
   @Get()
+  @ApiOperation({
+    summary: "Find all products"
+  })
   findAll() {
     return this.productService.findAll();
   }
 
   @Get('find/:id')
+  @ApiOperation({
+    summary: "Find one product by id"
+  })
   findOne(@Param('id') id: string) {
     return this.productService.findOne(id);
   }
 
  @Patch('find/:id')
+ @ApiOperation({
+  summary: "Update a product by id"
+})
   update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
     return this.productService.update(id, updateProductDto);
   }
 
   @Delete('delete/:id')
+  @ApiOperation({
+    summary: "Delete one product by id"
+  })
   remove(@Param('id') id: string) {
     return this.productService.remove(id);
   }

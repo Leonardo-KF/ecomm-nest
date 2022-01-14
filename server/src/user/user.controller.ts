@@ -30,23 +30,33 @@ export class UserController {
     return this.userService.addCart(user, productId);
   }
 
-  @Get()
-  findAll() {
-    return this.userService.findAll();
+  @UseGuards(AuthGuard())
+  @Get("cart")
+  @ApiOperation({
+    summary: "items in cart"
+  })
+  @ApiBearerAuth()
+  cart(@AuthUser() user: User ) {
+    return this.userService.cart(user);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
+  @UseGuards(AuthGuard())
+  @Patch('update')
+  @ApiOperation({
+    summary: "update user infos"
+  })
+  @ApiBearerAuth()
+  update(@AuthUser() user: User, @Body() updateUserDto: UpdateUserDto) {
+    return this.userService.update(user, updateUserDto);
   }
 
-  @Patch('update/:id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
-  }
-
-  @Delete('delete/:id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(id);
+  @UseGuards(AuthGuard())
+  @Delete('delete')
+  @ApiOperation({
+    summary: "delete user"
+  })
+  @ApiBearerAuth()
+  remove(@AuthUser() user: User) {
+    return this.userService.remove(user);
   }
 }
