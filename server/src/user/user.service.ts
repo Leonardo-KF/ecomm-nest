@@ -53,34 +53,39 @@ export class UserService {
       include: { products: true }
     })
 
-    inCart.products.map(async (product) => {
+    let foundproduct = false;
+
+    inCart.products.map((product) => {
       if (product.id === productId) {
-        await this.database.user.update({
-          where: { id: user.id},
-          data: { 
-            products: {
-              disconnect: {
-                id: productId
-              }
-            }
-          }
-        })
-        return {message: "Produto adcionado ao carrinho"}
-      } else {
-        await this.database.user.update({
-          where: { id: user.id },
-          data: {
-            products: { 
-              connect: { 
-                id: productId
-              }
-            }
-          }
-        })
-      }
-      return { message: "Produto removido do carrinho"}
+        foundproduct = true;
+      } 
     })
 
+    if (!foundproduct) {
+      await this.database.user.update({
+        where: { id: user.id },
+        data: {
+          products: { 
+            connect: { 
+              id: productId
+            }
+          }
+        }
+      })
+      return "produto adicionado do carrinho";
+    } else {
+      await this.database.user.update({
+        where: { id: user.id},
+        data: { 
+          products: {
+            disconnect: {
+              id: productId
+            }
+          }
+        }
+      })
+      return "Produto removido do carrinho";
+    }
     
   }
 
